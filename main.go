@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -32,12 +34,6 @@ func choseMovie(s string) []Movie{
 	})	
 	
 	c.Visit(url)
-	// c.OnScraped(func(r *colly.Response) {
-	// 	for i := 0; i < len(movies); i++ {
-	// 		movies[i].Index = i + 1
-	// 	}
-	// })
-
 	return movies
 }
 
@@ -87,25 +83,92 @@ link := Link{
 }
 
 
-func main() {
+
+
+
+
+
+
+
+
+
+
+
+func getDownloadLink(url string) string{
+
+	c := colly.NewCollector()
+
+	var link string
+	c.OnHTML(".download-link", func(e *colly.HTMLElement) {
+		link = e.Attr("href")
+	})	
 	
-	movies := choseMovie("whiplash")
+	c.Visit(url)
+	return link
+}
 
-	for _, v := range movies {
 
-		fmt.Printf("\n%v ===> %v\n", v.Index, v.Name)
+
+func getDownloadLinkDirect(url string) string{
+
+	c := colly.NewCollector()
+
+	var link string
+	c.OnHTML(".btn-loader", func(e *colly.HTMLElement) {
+		link = e.ChildAttr("a", "href")
+	})	
+	
+	c.Visit(url)
+	return link
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+func main() {
+	for {
+		
+		fmt.Println("Enter the work name:")
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		movie := scanner.Text()
+		movies := choseMovie(movie)
+
+		for _, v := range movies {
+			fmt.Printf("\n%v ===> %v\n", v.Index, v.Name)
+		}
+		var choosenMovie int
+		fmt.Print("Choose work: ")
+		fmt.Scanln(&choosenMovie)
+
+		links := getLink(movies[choosenMovie-1].Url)
+
+		for _, v := range links {
+			fmt.Printf("\n%v ===> %v ===> %v \n", v.Index, v.Quality, v.Size)
+		}
+
+		var choosenQuality int
+		fmt.Print("choose quality: ")
+		fmt.Scanln(&choosenQuality)
+
+		downloadLink := getDownloadLinkDirect(getDownloadLink(links[choosenQuality-1].Url))
+		fmt.Println(downloadLink)
+
+		// Prompt the user if they want to continue
+		var continueOption string
+		fmt.Print("Do you want to continue? (yes/no): ")
+		fmt.Scanln(&continueOption)
+		if continueOption != "yes" {
+			break // Exit the loop if the user doesn't want to continue
+		}
 	}
-	var choosenMovie int
-	fmt.Print("choose movie: ")
-
-	fmt.Scanln(&choosenMovie)
-
-
-	links := getLink(movies[choosenMovie  - 1].Url)
-
-for _, v := range links {
-		fmt.Printf("\n%v ===> %v ===> %v\n", v.Index, v.Quality, v.Size)
-	}
-
-
 }
