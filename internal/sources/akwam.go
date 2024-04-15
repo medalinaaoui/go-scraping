@@ -28,7 +28,7 @@ type Work struct {
 //     return ""
 // }
 
-func choseMovie(s string) []Work{
+func ChoseMovie(s string) []Work{
 
 	query := strings.ReplaceAll(s, " ", "+") 
 	url := fmt.Sprintf("https://ak.sv/search?q=%s", query)
@@ -65,7 +65,7 @@ type Link struct{
 
 
 
-func getLink(url string) []Link{
+func ChooseQuality(url string) []Link{
 
 	
 	c := colly.NewCollector()
@@ -159,18 +159,22 @@ func getDownloadLink(url string) string{
 	return link
 }
 
+	type directLink struct{
+		Url string `json:"url"`
+	}
 
+func GetDownloadLinkDirect(url string) directLink{
 
-func getDownloadLinkDirect(url string) string{
+	mainUrl := getDownloadLink(url)
 
 	c := colly.NewCollector()
 
-	var link string
+	var link directLink
 	c.OnHTML(".btn-loader", func(e *colly.HTMLElement) {
-		link = e.ChildAttr("a", "href")
+		link.Url = e.ChildAttr("a", "href")
 	})	
 	
-	c.Visit(url)
+	c.Visit(mainUrl)
 	return link
 }
 
@@ -186,7 +190,7 @@ func Akwam () {
 		scanner := bufio.NewScanner(os.Stdin)
 		scanner.Scan()
 		movie := scanner.Text()
-		movies := choseMovie(movie)
+		movies := ChoseMovie(movie)
 
 		for _, v := range movies {
 			fmt.Printf("\n%v ===> %v ===> %v\n", v.Index, v.Name, v.Type)
@@ -202,7 +206,7 @@ func Akwam () {
 
 		if movies[choosenMovie-1].Type == "Movie"{
 			
-					links := getLink(movies[choosenMovie-1].Url)
+					links := ChooseQuality(movies[choosenMovie-1].Url)
 			
 					for _, v := range links {
 						fmt.Printf("\n%v ===> %v ===> %v \n", v.Index, v.Quality, v.Size)
@@ -215,7 +219,7 @@ func Akwam () {
 		fmt.Print("choose quality: ")
 		fmt.Scanln(&choosenQuality)
 
-		downloadLink := getDownloadLinkDirect(getDownloadLink(links[choosenQuality-1].Url))
+		downloadLink := GetDownloadLinkDirect(getDownloadLink(links[choosenQuality-1].Url))
 		fmt.Println(downloadLink)
 
 
@@ -232,7 +236,7 @@ func Akwam () {
 		fmt.Scanln(&choosenEpisode)
 
 
-					links := getLink(episodes[choosenEpisode-1].Url)
+					links := ChooseQuality(episodes[choosenEpisode-1].Url)
 			
 					for _, v := range links {
 						fmt.Printf("\n%v ===> %v ===> %v \n", v.Index, v.Quality, v.Size)
@@ -243,7 +247,7 @@ func Akwam () {
 		fmt.Print("choose quality: ")
 		fmt.Scanln(&choosenQuality)
 
-		downloadLink := getDownloadLinkDirect(getDownloadLink(links[choosenQuality-1].Url))
+		downloadLink := GetDownloadLinkDirect(getDownloadLink(links[choosenQuality-1].Url))
 		fmt.Println(downloadLink)
 
 
