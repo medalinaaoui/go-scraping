@@ -110,7 +110,7 @@ type Episode struct{
 }
 
 
-func chooseEpisode(url string) []Episode{
+func ChooseEpisode(url string) []Episode{
 
 	
 	c := colly.NewCollector()
@@ -225,7 +225,7 @@ func Akwam () {
 
 
 		} else{
-			episodes := chooseEpisode(movies[choosenMovie-1].Url)
+			episodes := ChooseEpisode(movies[choosenMovie-1].Url)
 			
 					for _, v := range episodes {
 						fmt.Printf("\n%v ===> %v\n", v.Index, v.Eposide)
