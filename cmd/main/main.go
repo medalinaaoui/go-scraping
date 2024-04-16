@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"github.com/medali/go-scraping/routes"
 	// "github.com/medali/go-scraping/internal/sources"
@@ -21,45 +22,30 @@ import (
 
 func main() {
 
+ r := mux.NewRouter()
+
+    // CORS middleware
+    corsHandler := handlers.CORS(
+        handlers.AllowedOrigins([]string{"http://localhost:3000", "http://localhost:3000/"}),
+        handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+        handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+    )
+
+    // Apply CORS middleware to the router
+    http.Handle("/", corsHandler(r))
+
+    // Register routes
+    routes.FetchWorks(r)
+
+
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+// start server listen
+// with error handling
+	log.Fatal(http.ListenAndServe(":" + "8001", handlers.CORS(originsOk, headersOk, methodsOk)(r)))
 
 
 
-
-	// for {
-
-
-
-	// 	var choosenSource string
-	// 	fmt.Print("Choose source: ")
-	// 	fmt.Scanln(&choosenSource)
-
-	// 	if choosenSource == "Akwam" {
-	// 		sources.Akwam()
-	// 	} else {
-	// 	fmt.Print("source doesn't exists")
-			
-	// 	}
-
-
-
-
-		
-	
-	// 	// Prompt the user if they want to continue
-	// 	var continueOption string
-	// 	fmt.Print("Do you want to continue? (yes/no): ")
-	// 	fmt.Scanln(&continueOption)
-	// 	if continueOption != "yes" {
-	// 		break 
-	// 	}
-	// }
-
-
-	r := mux.NewRouter()
-	routes.FetchWorks(r)
-	http.Handle("/", r)
-
-	if err := http.ListenAndServe(":8001", r); err == nil {
-		log.Fatal(err)
-	}
 }
