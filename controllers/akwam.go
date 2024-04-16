@@ -6,19 +6,29 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/medali/go-scraping/internal/sources"
+	"github.com/medali/go-scraping/internal/sources/akwam"
+	"github.com/medali/go-scraping/internal/sources/wecinema"
 )
-
 
 
 func SearchWork(res http.ResponseWriter, req *http.Request){
 	res.Header().Set("Content-Type","application/json")
 	params := mux.Vars(req)
-	works := sources.ChoseMovie(params["query"])
+	akwamWorks := akwam.ChoseMovie(params["query"])
+	weCinemaWorks := wecinema.ChoseMovie(params["query"])
+	
+	
+// Convert weCinemaWorks to akwam.Work type
+var works []akwam.Work
+		for _, w := range weCinemaWorks {
+   		 works = append(works, akwam.Work(w))
+	}
+
+	works = append(works, akwamWorks...)
 	json.NewEncoder(res).Encode(works)
+
+
 }
-
-
 
 
 
@@ -33,7 +43,7 @@ func ChooseQuality(res http.ResponseWriter, req *http.Request){
 	var link LinkForQuality
 	_ = json.NewDecoder(req.Body).Decode(&link)
 	
-	links := sources.ChooseQuality(link.Url)
+	links := akwam.ChooseQuality(link.Url)
 	fmt.Println(links)
 	json.NewEncoder(res).Encode(links)
 }
@@ -51,7 +61,7 @@ func ChooseEpisode(res http.ResponseWriter, req *http.Request){
 	var link LinkForEpisode
 	_ = json.NewDecoder(req.Body).Decode(&link)
 	
-	links := sources.ChooseEpisode(link.Url)
+	links := akwam.ChooseEpisode(link.Url)
 	fmt.Println(links)
 	json.NewEncoder(res).Encode(links)
 }
@@ -71,7 +81,7 @@ func GetLink(res http.ResponseWriter, req *http.Request){
 	res.Header().Set("Content-Type","application/json")
 	var link LinkForMovie
 	_ = json.NewDecoder(req.Body).Decode(&link)
-	directLink := sources.GetDownloadLinkDirect(link.Url)
+	directLink := akwam.GetDownloadLinkDirect(link.Url)
 	json.NewEncoder(res).Encode(directLink)
 }
 

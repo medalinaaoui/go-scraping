@@ -1,4 +1,4 @@
-package sources
+package akwam
 
 import (
 	"bufio"
@@ -12,21 +12,13 @@ import (
 
 
 type Work struct {
+	Source string `json:"source"` 
+
 	Index int    `json:"index"`
 	Type string    `json:"type"`
 	Name string `json:"name"`
 	Url string `json:"url"`
 }
-
-
-// func getWorkType(url string) string {
-//     if strings.Contains(url, "/series/") {
-//         return "Serie"
-//     } else if strings.Contains(url, "/movie/") {
-//         return "Movie"
-//     }
-//     return ""
-// }
 
 func ChoseMovie(s string) []Work{
 
@@ -42,6 +34,7 @@ func ChoseMovie(s string) []Work{
 		
 
 		movie := Work{
+			Source: "akwam",
 			Index: index,
 			Type: workType,
 			Name: e.ChildAttr("img", "alt"),
