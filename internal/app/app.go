@@ -13,3 +13,10 @@ func GetWorkType(url string) string {
     }
     return ""
 }
+func GetWorkTypeForArabSeed(title string) string {
+    if strings.Contains(title, "الحلقة") {
+        return "Episode"
+    } else {
+        return "Movie"
+    }
+}

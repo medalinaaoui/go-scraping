@@ -32,6 +32,26 @@ var works []akwam.Work
 
 
 
+
+
+func SearchWorkAkwam(res http.ResponseWriter, req *http.Request){
+	res.Header().Set("Content-Type","application/json")
+	params := mux.Vars(req)
+	akwamWorks := akwam.ChoseMovie(params["query"])
+	json.NewEncoder(res).Encode(akwamWorks)
+
+
+}
+
+
+
+
+
+
+
+
+
+
 type LinkForQuality struct {
 Url       string    `json:"url"`
 }

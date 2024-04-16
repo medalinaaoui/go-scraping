@@ -5,8 +5,24 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/medali/go-scraping/internal/sources/wecinema"
 )
+
+
+
+func SearchWorkWeCinema(res http.ResponseWriter, req *http.Request){
+	res.Header().Set("Content-Type","application/json")
+	params := mux.Vars(req)
+	
+	weCinemaWorks := wecinema.ChoseMovie(params["query"])
+	
+	json.NewEncoder(res).Encode(weCinemaWorks)
+
+
+}
+
+
 
 func ChooseQualityWeCinema(res http.ResponseWriter, req *http.Request){
 	res.Header().Set("Content-Type","application/json")
