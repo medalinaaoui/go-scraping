@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -37,8 +38,18 @@ func ChoseMovie(s string) []Work{
 	c.OnHTML(".GridItem .Thumb--GridItem a", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
 		title := e.Attr("title")
-		// var workType string = app.GetWorkType(link)
-		
+		style := e.ChildAttr(".BG--GridItem", "data-lazy-style")
+		fmt.Printf("🚀style: %v\n", style)
+
+		 re := regexp.MustCompile(`url\((.*?)\)`)
+    	match := re.FindStringSubmatch(style)
+
+		 var poster string
+    if len(match) > 1 {
+        poster = match[1]
+    } else {
+        poster = "" // Set a default value if the URL is not found
+    }
 
 		movie := Work{
 			Source: "Wecinema",
@@ -46,7 +57,7 @@ func ChoseMovie(s string) []Work{
 			Type: "Movie",
 			Name: title,
 			Url: link,
-			Poster: "",
+			Poster: poster,
 		}
 		index++
 		movies = append(movies, movie)

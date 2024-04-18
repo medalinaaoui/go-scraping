@@ -172,6 +172,7 @@ func GetDownloadLinkDirect(url string) directLink{
 	})	
 	
 	c.Visit(mainUrl)
+
 	return link
 }
 
@@ -245,6 +246,7 @@ func Akwam () {
 		fmt.Scanln(&choosenQuality)
 
 		downloadLink := GetDownloadLinkDirect(getDownloadLink(links[choosenQuality-1].Url))
+
 		fmt.Println(downloadLink)
 
 

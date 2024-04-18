@@ -14,12 +14,6 @@ func FetchWorks(router *mux.Router){
 	router.HandleFunc("/arabSeed/{query}", controllers.SearchWorkArabSeed).Methods("GET")
 
 
-
-
-
-
-
-
 	router.HandleFunc("/episode", controllers.ChooseEpisode).Methods("POST")
 	router.HandleFunc("/akwam/quality", controllers.ChooseQuality).Methods("POST")
 	router.HandleFunc("/wecinema/quality", controllers.ChooseQualityWeCinema).Methods("POST") // returns download link
