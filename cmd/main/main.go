@@ -19,15 +19,13 @@ import (
 
 
 
-
 func main() {
-
- r := mux.NewRouter()
+    r := mux.NewRouter()
 
     // CORS middleware
     corsHandler := handlers.CORS(
         handlers.AllowedOrigins([]string{"http://localhost:3000", "http://localhost:3000/"}),
-        handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE"}),
+        handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
         handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
     )
 
@@ -37,15 +35,11 @@ func main() {
     // Register routes
     routes.FetchWorks(r)
 
+    // Define allowed headers, origins, and methods
+    headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+    originsOk := handlers.AllowedOrigins([]string{"http://localhost:3000", "http://localhost:3000/"})
+    methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 
-	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With"})
-	originsOk := handlers.AllowedOrigins([]string{"*"})
-	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
-
-// start server listen
-// with error handling
-	log.Fatal(http.ListenAndServe(":" + "8001", handlers.CORS(originsOk, headersOk, methodsOk)(r)))
-
-
-
+    // Start server with CORS configuration
+    log.Fatal(http.ListenAndServe(":8001", handlers.CORS(originsOk, headersOk, methodsOk)(r)))
 }

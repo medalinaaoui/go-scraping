@@ -19,6 +19,7 @@ type Work struct {
 	Type string    `json:"type"`
 	Name string `json:"name"`
 	Url string `json:"url"`
+	Poster string `json:"poster"`
 }
 
 
@@ -45,6 +46,7 @@ func ChoseMovie(s string) []Work{
 			Type: "Movie",
 			Name: title,
 			Url: link,
+			Poster: "",
 		}
 		index++
 		movies = append(movies, movie)

@@ -18,6 +18,7 @@ type Work struct {
 	Type string    `json:"type"`
 	Name string `json:"name"`
 	Url string `json:"url"`
+	Poster string `json:"poster"`
 }
 
 func ChoseMovie(s string) []Work{
@@ -30,6 +31,8 @@ func ChoseMovie(s string) []Work{
 	index := 1
 	c.OnHTML(".entry-box .entry-image a", func(e *colly.HTMLElement) {
 		link := e.Attr("href")
+		poster := e.ChildAttr(".img-fluid", "src")
+
 		var workType string = app.GetWorkType(link)
 		
 
@@ -39,6 +42,7 @@ func ChoseMovie(s string) []Work{
 			Type: workType,
 			Name: e.ChildAttr("img", "alt"),
 			Url: link,
+			Poster: poster,
 		}
 		index++
 		movies = append(movies, movie)
